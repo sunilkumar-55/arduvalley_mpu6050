@@ -1,11 +1,13 @@
 #include "arduvalley_mpu6050.h"
+
 // Global_var
 const int MPU_addr = 0x68; // MPU6050 I2C address
 byte error;
 int16_t temp;
-float temp_in_cel;
+float temp_in_cel; //for reading temperature in celsius
 
-// Here we will put the definition of the function
+
+//definition of all the function
 void initialise_gyro()
 {
   Wire.begin();
@@ -26,7 +28,7 @@ void initialise_gyro()
   delay(100);
 }
 
-int16_t read_accel_x()
+int16_t read_accel_x_raw()
 { // for reading accel_x
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x3B);
@@ -48,7 +50,7 @@ int16_t read_accel_x()
   return temp;
 }
 
-int16_t read_accel_y()
+int16_t read_accel_y_raw()
 { // for reading accel_y
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x3D);
@@ -70,7 +72,7 @@ int16_t read_accel_y()
   return temp;
 }
 
-int16_t read_accel_z()
+int16_t read_accel_z_raw()
 { // for reading accel_z
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x3F);
@@ -92,7 +94,7 @@ int16_t read_accel_z()
   return temp;
 }
 
-int16_t read_gyro_x()
+int16_t read_gyro_x_raw()
 { // for reading gyro_x
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x43);
@@ -114,7 +116,7 @@ int16_t read_gyro_x()
   return temp;
 }
 
-int16_t read_gyro_y()
+int16_t read_gyro_y_raw()
 { // for reading gyro_y
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x45);
@@ -136,7 +138,7 @@ int16_t read_gyro_y()
   return temp;
 }
 
-int16_t read_gyro_z()
+int16_t read_gyro_z_raw()
 { // for reading accel_z
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x47);
@@ -173,7 +175,7 @@ float read_temp_in_cel()
   {
     temp = Wire.read() << 8;
     temp |= Wire.read();
-    temp_in_cel = temp/340 + 36.53;
+    temp_in_cel = temp / 340 + 36.53;
   }
   else
   {
@@ -181,4 +183,45 @@ float read_temp_in_cel()
   }
 
   return temp_in_cel;
+}
+
+float read_orientation_x()
+{
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x3B);
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_addr, 6);
+
+  temp = Wire.read() << 8;
+  temp |= Wire.read();
+  int16_t read_x = temp;
+
+  temp = Wire.read() << 8;
+  temp |= Wire.read();
+  int16_t read_y = temp;
+
+  temp = Wire.read() << 8;
+  temp |= Wire.read();
+  int16_t read_z = temp;
+
+  float read_accel_x = atan2(read_y, read_z) * 180.0 / PI;
+
+  return read_accel_x;
+}
+
+float read_orientation_y()
+{
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x3B);
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_addr, 6);
+  
+  int t = Wire.read();
+  float read_x = (t << 8) | Wire.read();
+  t = Wire.read();
+  float read_y = (t << 8) | Wire.read();
+  t = Wire.read();
+  float read_z = (t << 8) | Wire.read();
+  float read_accel_y = atan2(-read_x , sqrt(read_y * read_y + read_z * read_z)) * 180.0 / PI; //account for roll already applied
+  return read_accel_y;
 }
