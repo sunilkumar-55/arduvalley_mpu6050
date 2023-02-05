@@ -1,6 +1,6 @@
 #include <arduvalley_mpu6050.h>
-int16_t accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z;
-float temp_data;
+int16_t accel_x_raw, accel_y_raw, accel_z_raw, gyro_x_raw, gyro_y_raw, gyro_z_raw;
+float temperature_in_celsius, acceleration_x_axis, acceleration_y_axis;
 
 void setup() {
   Serial.begin(115200);
@@ -9,21 +9,38 @@ void setup() {
 }
 
 void loop() {
-  accel_x = read_accel_x();
-  accel_y = read_accel_y();
-  accel_y = read_accel_z();
+  // accel_x_raw = read_accel_x_raw();
+  // accel_y_raw = read_accel_y_raw();
+  // accel_z_raw = read_accel_z_raw();
 
-  gyro_x = read_gyro_x();
-  gyro_y = read_gyro_y();
-  gyro_z = read_gyro_z();
+  // gyro_x_raw = read_gyro_x_raw();
+  // gyro_y_raw = read_gyro_y_raw();
+  // gyro_z_raw = read_gyro_z_raw();
 
-  float a = read_temp_in_cel();
+  acceleration_x_axis = read_orientation_x();
+  acceleration_y_axis = read_orientation_y();
 
-  Serial.println(accel_x);
-  Serial.println(accel_y);
-  Serial.println(accel_z);
+  temperature_in_celsius = read_temp_in_cel();
 
-  Serial.println(gyro_x);
-  Serial.println(gyro_y);
-  Serial.println(gyro_z);
+  // Serial.print("accel_x_raw :: >> ");
+  // Serial.println(accel_x_raw);
+  // Serial.print("accel_y_raw :: >> ");
+  // Serial.println(accel_y_raw);
+  // Serial.print("accel_z_raw :: >> ");
+  // Serial.println(accel_z_raw);
+
+  // Serial.print("gyro_x_raw :: >> ");
+  // Serial.println(gyro_x_raw);
+  // Serial.print("gyro_y_raw :: >> ");
+  // Serial.println(gyro_y_raw);
+  // Serial.print("gyro_z_raw :: >> ");
+  // Serial.println(gyro_z_raw);
+
+  Serial.print("acceleration_x_axis :: >> ");
+  Serial.println(acceleration_x_axis);
+  Serial.print("acceleration_y_axis :: >> ");
+  Serial.println(acceleration_y_axis);
+  Serial.print("temperature_in_celsius :: >> ");
+  Serial.println(temperature_in_celsius);
+  delay(200);
 }
